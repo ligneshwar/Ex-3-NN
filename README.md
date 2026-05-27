@@ -1,7 +1,7 @@
-<H3>ENTER YOUR NAME</H3>
-<H3>ENTER YOUR REGISTER NO.</H3>
+<H3>NAME : Ligneshwar K</H3>
+<H3>REGISTER NO : 212223230113</H3>
 <H3>EX. NO.3</H3>
-<H3>DATE:</H3>
+<H3>DATE: 27-05-2026</H3>
 <H2 aligh = center> Implementation of MLP for a non-linearly separable data</H2>
 <h3>Aim:</h3>
 To implement a perceptron for classification using Python
@@ -36,11 +36,115 @@ Step 3: Repeat the  iteration  until the losses become constant and  minimum<BR>
 Step 4 : Test for the XOR patterns.
 
 <H3>Program:</H3>
-Insert your code here
 
+```
+import pandas as pd
+import numpy as np
+import io
+import matplotlib.pyplot as plt
+
+# Input and Output for XOR
+x = np.array([[0,0,1,1],
+              [0,1,0,1]])
+
+y = np.array([[0,1,1,0]])
+
+# Number of neurons
+n_x = 2
+n_h = 2
+n_y = 1
+
+m = x.shape[1]
+lr = 0.1
+
+# Initialize weights
+np.random.seed(2)
+
+w1 = np.random.rand(n_h, n_x)
+w2 = np.random.rand(n_y, n_h)
+
+losses = []
+
+# Sigmoid function
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+# Forward propagation
+def forward_prop(w1, w2, x):
+    z1 = np.dot(w1, x)
+    a1 = sigmoid(z1)
+
+    z2 = np.dot(w2, a1)
+    a2 = sigmoid(z2)
+
+    return z1, a1, z2, a2
+
+# Backward propagation
+def back_prop(m, w1, w2, z1, a1, z2, a2, y):
+    
+    dz2 = a2 - y
+    dw2 = np.dot(dz2, a1.T) / m
+
+    dz1 = np.dot(w2.T, dz2) * a1 * (1 - a1)
+    dw1 = np.dot(dz1, x.T) / m
+
+    dw1 = np.reshape(dw1, w1.shape)
+    dw2 = np.reshape(dw2, w2.shape)
+
+    return dw2, dw1
+
+# Training
+iterations = 10000
+
+for i in range(iterations):
+
+    z1, a1, z2, a2 = forward_prop(w1, w2, x)
+
+    loss = -(1/m) * np.sum(y*np.log(a2) + (1-y)*np.log(1-a2))
+
+    losses.append(loss)
+
+    dw2, dw1 = back_prop(m, w1, w2, z1, a1, z2, a2, y)
+
+    w2 = w2 - lr * dw2
+    w1 = w1 - lr * dw1
+
+# Plot Loss Graph
+plt.plot(losses)
+plt.xlabel("EPOCHS")
+plt.ylabel("Loss value")
+plt.title("Loss Curve")
+plt.show()
+
+# Prediction Function
+def predict(w1, w2, test):
+
+    z1, a1, z2, a2 = forward_prop(w1, w2, test)
+
+    output = 1 if a2 >= 0.5 else 0
+
+    print(f"{test.T.tolist()}      {output}")
+
+# Testing
+print("Input  Output")
+
+tests = [
+    np.array([[1],[0]]),
+    np.array([[1],[1]]),
+    np.array([[0],[1]]),
+    np.array([[0],[0]])
+]
+
+for test in tests:
+    predict(w1, w2, test)
+```
 <H3>Output:</H3>
 
-Show your results here
+<img width="836" height="539" alt="image" src="https://github.com/user-attachments/assets/c2bb6298-1459-4480-ab58-928925d86faf" />
+
+
+<img width="309" height="164" alt="image" src="https://github.com/user-attachments/assets/95745255-2694-4ced-a3e1-5fe891463fac" />
+
 
 <H3> Result:</H3>
 Thus, XOR classification problem can be solved using MLP in Python 
